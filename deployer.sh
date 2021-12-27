@@ -223,11 +223,11 @@ if [ $CREATE_KEYBASED -eq 1 ] ; then
     sed "s;@@TABLE_NAME@@;$TABLE_NAME;" $SCRIPT_ROOT/kubectl_files/99_create_endpoint.yml > $SCRIPT_ROOT/endpoint_files/$TABLE_NAME.yml
 
     echo "creating pod"
-    kubectl apply -f $SCRIPT_ROOT/endpoint_files/$TABLE_NAME.yml
+    kubectl apply -f $SCRIPT_ROOT/endpoint_files/$TABLE_NAME.yml > /dev/null
 
     echo "running mysql procedure"
     MYSQL_POD_NAME=$(kubectl get pods -n $(cat $SCRIPT_ROOT/config/NAMESPACE) | grep -ie "^mysql-" | awk '{print $1}')
-    kubectl exec -n $(cat $SCRIPT_ROOT/config/NAMESPACE) -it $MYSQL_POD_NAME -- /bin/bash -c "mysql -u$(cat $SCRIPT_ROOT/config/MARIADB_USER) -p$(cat $SCRIPT_ROOT/config/MARIADB_PASSWORD) \"CALL \`create_timebased\`('$TABLE_NAME');\"" >/dev/null
+    kubectl exec -n $(cat $SCRIPT_ROOT/config/NAMESPACE) -it $MYSQL_POD_NAME -- /bin/bash -c "mysql -u$(cat $SCRIPT_ROOT/config/MARIADB_USER) -p$(cat $SCRIPT_ROOT/config/MARIADB_PASSWORD) $(cat $SCRIPT_ROOT/config/MARIADB_DATABASE) \"CALL \`create_timebased\`('$TABLE_NAME');\"" >/dev/null
 
     exit 0
 fi
