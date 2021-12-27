@@ -21,7 +21,7 @@ BEGIN
 
     -- Create Config
     SET @c = CONCAT('CREATE TABLE IF NOT EXISTS data_', newtablename,'(
-        `key` VARCHAR(255) PRIMARY KEY,
+        `keyName` VARCHAR(255) PRIMARY KEY,
         `value` VARCHAR(1024),
         `created_on` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         `updated_on` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

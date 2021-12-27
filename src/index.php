@@ -17,9 +17,9 @@ try{
 
         if(isset($_POST['key']) && isset($_POST['value'])){
             if($mode == 1){
-                $sql = "INSERT INTO data_".$_ENV['GRAFPUSH_TABLENAME']."(`key`,`value`) VALUES('".$_POST['key']."','".$_POST['value']."') ON DUPLICATE KEY UPDATE `value` = '".$_POST['value']."'";
+                $sql = "INSERT INTO data_".$_ENV['GRAFPUSH_TABLENAME']."(`keyName`,`value`) VALUES('".$_POST['key']."','".$_POST['value']."') ON DUPLICATE KEY UPDATE `value` = '".$_POST['value']."'";
             } else {
-                $sql = "INSERT INTO data_".$_ENV['GRAFPUSH_TABLENAME']."(`key`,`value`) VALUES('".$_POST['key']."','".$_POST['value']."')";
+                $sql = "INSERT INTO data_".$_ENV['GRAFPUSH_TABLENAME']."(`keyName`,`value`) VALUES('".$_POST['key']."','".$_POST['value']."')";
             }
 
             $query = $pdo->prepare($sql);

@@ -22,7 +22,7 @@ BEGIN
     -- Create Config
     SET @c = CONCAT('CREATE TABLE IF NOT EXISTS data_', newtablename,'(
         `id` INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        `key` VARCHAR(255),
+        `keyName` VARCHAR(255),
         `value` VARCHAR(1024),
         `created_on` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )');
