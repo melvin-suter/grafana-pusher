@@ -200,6 +200,7 @@ if [ $CREATE_INFRA -eq 1 ] ; then
     echo ""
     echo ""
     echo "Done"
+    echo "PHPMyAdmin URL:                 management.$BASE_URL"
     echo "MariaDB root password:          $MARIA_ROOT_PW"
     echo "MariaDB grafanapusher password: $MARIA_PW"
 

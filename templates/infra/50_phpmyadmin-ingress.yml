@@ -5,7 +5,7 @@ metadata:
   namespace: @@NAMESPACE@@
 spec:
   rules:
-  - host: mngmt.@@BASE_URL@@
+  - host: management.@@BASE_URL@@
     http:
       paths:
       - backend:
