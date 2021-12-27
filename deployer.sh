@@ -140,6 +140,7 @@ if [ $CREATE_INFRA -eq 1 ] ; then
         sleep 2
         POD_STATE="$( kubectl get pods -n $NAMESPACE | grep -ie "^mysql-" | awk '{print $3}')"
     done
+    sleep 15
 
     echo "deploying mysql config..."
     MYSQL_POD_NAME=$(kubectl get pods -n $NAMESPACE | grep -ie "^mysql-" | awk '{print $1}')
