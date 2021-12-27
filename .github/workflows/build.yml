@@ -5,6 +5,7 @@ on:
     paths:
       - 'dockerfile'
       - 'src/**'
+      - '.github/workflows/**'
 
 jobs:
   push_to_registry:
