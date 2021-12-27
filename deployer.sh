@@ -229,9 +229,9 @@ if [ $CREATE_KEYBASED -eq 1 ] || [ $CREATE_TIMEBASED -eq 1 ] ; then
     MYSQL_POD_NAME=$(kubectl get pods -n $(cat $SCRIPT_ROOT/config/NAMESPACE) | grep -ie "^mysql-" | awk '{print $1}')
 
     if [ $CREATE_KEYBASED -eq 1 ] ; then
-        kubectl exec -n $(cat $SCRIPT_ROOT/config/NAMESPACE) -it $MYSQL_POD_NAME -- /bin/bash -c "echo \"CALL create_keybased('$TABLE_NAME');\" | mysql -u$(cat $SCRIPT_ROOT/config/MARIADB_USER) -p$(cat $SCRIPT_ROOT/config/MARIADB_PASSWORD) $(cat $SCRIPT_ROOT/config/MARIADB_DATABASE)" >/dev/null
+        kubectl exec -n $(cat $SCRIPT_ROOT/config/NAMESPACE) -it $MYSQL_POD_NAME -- /bin/bash -c "echo \"CALL create_keybased('$TABLE_NAME');\" | mysql -u$(cat $SCRIPT_ROOT/config/MARIADB_USER) -p$(cat $SCRIPT_ROOT/config/MARIADB_PASSWORD) $(cat $SCRIPT_ROOT/config/MARIADB_DATABASE)"
     else
-        kubectl exec -n $(cat $SCRIPT_ROOT/config/NAMESPACE) -it $MYSQL_POD_NAME -- /bin/bash -c "echo \"CALL create_timebased('$TABLE_NAME');\" | mysql -u$(cat $SCRIPT_ROOT/config/MARIADB_USER) -p$(cat $SCRIPT_ROOT/config/MARIADB_PASSWORD) $(cat $SCRIPT_ROOT/config/MARIADB_DATABASE)" >/dev/null
+        kubectl exec -n $(cat $SCRIPT_ROOT/config/NAMESPACE) -it $MYSQL_POD_NAME -- /bin/bash -c "echo \"CALL create_timebased('$TABLE_NAME');\" | mysql -u$(cat $SCRIPT_ROOT/config/MARIADB_USER) -p$(cat $SCRIPT_ROOT/config/MARIADB_PASSWORD) $(cat $SCRIPT_ROOT/config/MARIADB_DATABASE)"
     fi
 
     exit 0

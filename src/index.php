@@ -8,8 +8,10 @@ try{
     $query = $pdo->prepare("SELECT authkey,mode FROM tableconfig WHERE tablename = ?");
     $query->execute(array($_ENV["GRAFPUSH_TABLENAME"]));   
     
-    $authKey = $query->fetch()["authkey"];
-    $mode = $query->fetch()["mode"];
+    $row =$query->fetch();
+    $authKey = $row["authkey"];
+    $mode = $row["mode"];
+    
     
     if($_SERVER["HTTP_AUTH"] == $authKey){
 
@@ -22,6 +24,7 @@ try{
 
             $query = $pdo->prepare($sql);
             $query->execute();
+            echo $query->debugDumpParams();
         } else {
             echo "504 not enough data";
         }
