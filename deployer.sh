@@ -75,6 +75,13 @@ if [ $CREATE_INFRA -eq 1 ] ; then
         exit 1
     fi
 
+
+
+
+    #############
+    #   KEYS
+    #############
+
     echo "Generating keys..."
     MARIA_PW=$(cat /dev/urandom | tr -dc '[:alpha:]' | fold -w ${1:-20} | head -n 1 | md5sum | awk '{print $1}')
     MARIA_PW_64=$(echo -n $MARIA_PW | base64)
@@ -82,6 +89,11 @@ if [ $CREATE_INFRA -eq 1 ] ; then
     MARIA_ROOT_PW_64=$(echo -n $MARIA_ROOT_PW | base64)
 
      
+     
+
+    #############
+    # TEMPLATES
+    #############
 
     echo "Generating templates..."
     cp -R $SCRIPT_ROOT/templates/infra $SCRIPT_ROOT/kubectl_files
@@ -103,6 +115,14 @@ if [ $CREATE_INFRA -eq 1 ] ; then
     echo "$BASE_URL" > $SCRIPT_ROOT/config/BASE_URL
     echo "$MARIADB_USER" > $SCRIPT_ROOT/config/MARIADB_USER
     echo "$MARIADB_DATABASE" > $SCRIPT_ROOT/config/MARIADB_DATABASE
+
+
+
+
+    #############
+    # CREATING INFAR
+    #############
+
 
     echo "Creating infra..."
     echo "* namespace"
@@ -133,6 +153,14 @@ if [ $CREATE_INFRA -eq 1 ] ; then
     echo "* phpmyadmin ingress"
     kubectl apply -f $SCRIPT_ROOT/kubectl_files/50_phpmyadmin-ingress.yml > /dev/null
 
+
+
+
+    #############
+    # MYSQL SETUP
+    #############
+
+
     echo "waiting for mysql pod to be running..."
     POD_STATE="$( kubectl get pods -n $NAMESPACE | grep -ie "^mysql-" | awk '{print $3}')"
     while [[ $POD_STATE != "Running" ]] ; do
@@ -140,15 +168,32 @@ if [ $CREATE_INFRA -eq 1 ] ; then
         sleep 2
         POD_STATE="$( kubectl get pods -n $NAMESPACE | grep -ie "^mysql-" | awk '{print $3}')"
     done
+    echo "** waiting 15 seconds for mysql to be up"
     sleep 15
 
     echo "deploying mysql config..."
     MYSQL_POD_NAME=$(kubectl get pods -n $NAMESPACE | grep -ie "^mysql-" | awk '{print $1}')
 
-    find $SCRIPT_ROOT/mysql/ -type f | while read file ; do 
-        kubectl cp -n $NAMESPACE $file $MYSQL_POD_NAME:/tmp/$(basename $file).sql
-        kubectl exec -n $NAMESPACE -it $MYSQL_POD_NAME -- /bin/bash -c "cat /tmp/$(basename $file).sql | mysql -uroot -p$MARIA_ROOT_PW $MARIADB_DATABASE"
-    done
+    echo "* tables.sql"
+    kubectl cp -n $NAMESPACE $SCRIPT_ROOT/mysql/tables.sql $MYSQL_POD_NAME:/tmp/tables.sql
+    kubectl exec -n $NAMESPACE -it $MYSQL_POD_NAME -- /bin/bash -c "cat /tmp/tables.sql | mysql -uroot -p$MARIA_ROOT_PW $MARIADB_DATABASE"
+
+    echo "* create_keybased.sql"
+    kubectl cp -n $NAMESPACE $SCRIPT_ROOT/mysql/create_keybased.sql $MYSQL_POD_NAME:/tmp/create_keybased.sql
+    kubectl exec -n $NAMESPACE -it $MYSQL_POD_NAME -- /bin/bash -c "cat /tmp/create_keybased.sql | mysql -uroot -p$MARIA_ROOT_PW $MARIADB_DATABASE"
+
+    echo "* create_timebased.sql"
+    kubectl cp -n $NAMESPACE $SCRIPT_ROOT/mysql/create_timebased.sql $MYSQL_POD_NAME:/tmp/create_timebased.sql
+    kubectl exec -n $NAMESPACE -it $MYSQL_POD_NAME -- /bin/bash -c "cat /tmp/create_timebased.sql | mysql -uroot -p$MARIA_ROOT_PW $MARIADB_DATABASE"
+
+    echo "* delete_table.sql"
+    kubectl cp -n $NAMESPACE $SCRIPT_ROOT/mysql/delete_table.sql $MYSQL_POD_NAME:/tmp/delete_table.sql
+    kubectl exec -n $NAMESPACE -it $MYSQL_POD_NAME -- /bin/bash -c "cat /tmp/delete_table.sql | mysql -uroot -p$MARIA_ROOT_PW $MARIADB_DATABASE"
+
+
+    #############
+    #   ENDING
+    #############
 
 
 
