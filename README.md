@@ -1,6 +1,11 @@
 
 ![build.yml](https://github.com/melvin-suter/grafana-pusher/actions/workflows/build.yml/badge.svg)
 
+This kubernetes "system" is designed to give the simple ability, to add key-value to a database, so grafana can read it.
+It is easy to use (with a single http call) and is based on a mysql database.
+
+You can store data simple as a key-value pair, or as a time-based key-value pair, where the key doesn't have to be unique.
+
 
 # Setup
 
@@ -76,11 +81,11 @@ Authorization Key: 3gno37f8n918oh2ouz10lrosqzg0fsgm
 Here is a simple example, which will just push a number to the `lightstate` table in the example above:
 
 ```bash
-curl --insecure -XPOST -H "AUTH: 3gno37f8n918oh2ouz10lrosqzg0fsgm" -F "key=light1" -F "value=1" https://api-lightstate.grafapush.kub.suter-lab.dev
+curl --insecure -XPOST -H "AUTH: 3gno37f8n918oh2ouz10lrosqzg0fsgm" -F "key=light1" -F "value=1" https://api-lightstate.grafapush.kub.example.com
 ```
 
 ```powershell
-Invoke-WebRequest  -Method Post -Body @{"key" = "light"; "value" = "1"} -Headers @{"AUTH" = "3gno37f8n918oh2ouz10lrosqzg0fsgm"}  -ContentType "application/x-www-form-urlencoded" -Uri https://api-lightstate.grafapush.kub.suter-lab.dev
+Invoke-WebRequest  -Method Post -Body @{"key" = "light"; "value" = "1"} -Headers @{"AUTH" = "3gno37f8n918oh2ouz10lrosqzg0fsgm"}  -ContentType "application/x-www-form-urlencoded" -Uri https://api-lightstate.grafapush.kub.example.com
 ```
 
 ## Powershell SSL
