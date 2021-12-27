@@ -19,10 +19,10 @@ while [[ $# -gt 0 ]]; do
     --table=*)
       TABLE_NAME="${1#*=}"
       ;;
-    ---namespace=*)
+    --namespace=*)
       NAMESPACE="${1#*=}"
       ;;
-    ---pv=*)
+    --pv=*)
       PV="${1#*=}"
       ;;
     --create-infra)
@@ -40,7 +40,7 @@ while [[ $# -gt 0 ]]; do
         CREATE_TIMEBASED=0
       ;;
     *)
-        echo "INVALID ARGUMENT"
+        echo "INVALID ARGUMENT: $1"
         exit 1
   esac
   shift
