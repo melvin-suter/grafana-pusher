@@ -77,7 +77,7 @@ if [ $CREATE_INFRA -eq 1 ] ; then
 
     echo "Generating keys..."
     TEST_RES=0
-    while ( $TEST_RES -ne 2 ) ; do
+    while [ $TEST_RES -ne 2 ] ; do
         MARIA_PW=$(cat /dev/urandom | tr -dc '[:alpha:]' | fold -w ${1:-20} | head -n 1 | md5sum | awk '{print $1}')
         MARIA_PW_64=$(echo -n $MARIA_PW | base64)
         MARIA_ROOT_PW=$(cat /dev/urandom | tr -dc '[:alpha:]' | fold -w ${1:-20} | head -n 1 | md5sum | awk '{print $1}')
