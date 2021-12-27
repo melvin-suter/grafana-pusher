@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: @@NAMESPACE@@
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mariadb:10.7.1
+        name: mysql
+        env:
+        - name: MARIADB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MARIADB_ROOT_PASSWORD
+              name: mysql-secret
+              optional: false
+        - name: MARIADB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MARIADB_PASSWORD
+              name: mysql-secret
+              optional: false
+        - name: MARIADB_USER
+          valueFrom:
+            configMapKeyRef:
+              key: MARIADB_USER
+              name: mysql-config
+              optional: false
+        - name: MARIADB_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              key: MARIADB_DATABASE
+              name: mysql-config
+              optional: false
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-root-dir
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-root-dir
+        persistentVolumeClaim:
+          claimName: pvc-grafana-pusher-mysql

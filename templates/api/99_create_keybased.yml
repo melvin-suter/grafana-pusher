@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: api-endpoint
+    tablename: @@TABLE_NAME@@
+  name: api-endpoint-@@TABLE_NAME@@
+  namespace: @@NAMESPACE@@
+spec:
+  containers:
+  - image: suterdev/grafana-pusher:build
+    imagePullPolicy: Always
+    name: api-endpoint
+    env:
+    - name: GRAFPUSH_TABLENAME
+      value: @@TABLE_NAME@@
+    - name: MARIADB_HOST
+      value: mysql-service
+    - name: MARIADB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: MARIADB_PASSWORD
+          name: mysql-secret
+          optional: false
+    - name: MARIADB_USER
+      valueFrom:
+        configMapKeyRef:
+          key: MARIADB_USER
+          name: mysql-config
+          optional: false
+    - name: MARIADB_DATABASE
+      valueFrom:
+        configMapKeyRef:
+          key: MARIADB_DATABASE
+          name: mysql-config
+          optional: false
+  imagePullSecrets:
+  - name: regcred
+  restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-endpoint-@@TABLE_NAME@@-service
+  namespace: @@NAMESPACE@@
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: api-endpoint
+    tablename: @@TABLE_NAME@@
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-endpoint-@@TABLE_NAME@@
+  namespace: @@NAMESPACE@@
+spec:
+  rules:
+  - host: api-@@TABLE_NAME@@.@@BASE_URL@@
+    http:
+      paths:
+      - backend:
+          service:
+            name: api-endpoint-@@TABLE_NAME@@-service
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
