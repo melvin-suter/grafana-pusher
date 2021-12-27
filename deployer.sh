@@ -8,8 +8,8 @@ TABLE_NAME=""
 NAMESPACE="grafana-pusher"
 MARIADB_USER="grafanapusher"
 MARIADB_DATABASE="grafanapusher"
-PV=0
-BASE_URL=0
+PV=""
+BASE_URL=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -69,16 +69,16 @@ echo_help () {
 if [ $CREATE_INFRA -eq 1 ] ; then
 
     # exit if not all required arguments are passed
-    if [ $BASE_URL -eq 0 ] ; then
+    if [[ $BASE_URL == "" ]] ; then
         echo "ERROR: base-url is required!!"
         echo_help
         exit 1
     fi
 
     echo "Generating keys..."
-    MARIA_PW=$(date | md5sum | awk '{print $1}')
+    MARIA_PW=$(cat /dev/urandom | tr -dc '[:alpha:]' | fold -w ${1:-20} | head -n 1 | md5sum | awk '{print $1}')
     MARIA_PW_64=$(echo -n $MARIA_PW | base64)
-    MARIA_ROOT_PW=$(date | md5sum | awk '{print $1}')
+    MARIA_ROOT_PW=$(cat /dev/urandom | tr -dc '[:alpha:]' | fold -w ${1:-20} | head -n 1 | md5sum | awk '{print $1}')
     MARIA_ROOT_PW_64=$(echo -n $MARIA_ROOT_PW | base64)
 
     echo "Generating templates..."
@@ -104,32 +104,32 @@ if [ $CREATE_INFRA -eq 1 ] ; then
 
     echo "Creating infra..."
     echo "* namespace"
-    kubectl apply -f $SCRIPT_ROOT/kubectl_files/00_namespace.yml
+    kubectl apply -f $SCRIPT_ROOT/kubectl_files/00_namespace.yml > /dev/null
 
     echo "* pvc"
-    if [ $PV -eq 0 ] ; then
-        kubectl apply -f $SCRIPT_ROOT/kubectl_files/10_pvc_generic.yml.yml
+    if [[ $PV == "" ]] ; then
+        kubectl apply -f $SCRIPT_ROOT/kubectl_files/10_pvc_generic.yml > /dev/null
     else
-        kubectl apply -f $SCRIPT_ROOT/kubectl_files/10_pvc_named.yml.yml
+        kubectl apply -f $SCRIPT_ROOT/kubectl_files/10_pvc_named.yml > /dev/null
     fi
 
     echo "* mysql config"
-    kubectl apply -f $SCRIPT_ROOT/kubectl_files/20_mysql_config.yml
+    kubectl apply -f $SCRIPT_ROOT/kubectl_files/20_mysql_config.yml > /dev/null
 
     echo "* mysql deployment"
-    kubectl apply -f $SCRIPT_ROOT/kubectl_files/30_mysql.yml
+    kubectl apply -f $SCRIPT_ROOT/kubectl_files/30_mysql.yml > /dev/null
 
     echo "* mysql service"
-    kubectl apply -f $SCRIPT_ROOT/kubectl_files/35_mysql-service.yml
+    kubectl apply -f $SCRIPT_ROOT/kubectl_files/35_mysql-service.yml > /dev/null
 
     echo "* phpmyadmin deployment"
-    kubectl apply -f $SCRIPT_ROOT/kubectl_files/40_phpmyadmin.yml
+    kubectl apply -f $SCRIPT_ROOT/kubectl_files/40_phpmyadmin.yml > /dev/null
 
     echo "* phpmyadmin service"
-    kubectl apply -f $SCRIPT_ROOT/kubectl_files/45_phpmyadmin-service.yml
+    kubectl apply -f $SCRIPT_ROOT/kubectl_files/45_phpmyadmin-service.yml > /dev/null
 
     echo "* phpmyadmin ingress"
-    kubectl apply -f $SCRIPT_ROOT/kubectl_files/50_phpmyadmin-ingress.yml
+    kubectl apply -f $SCRIPT_ROOT/kubectl_files/50_phpmyadmin-ingress.yml > /dev/null
 
     echo "waiting for mysql pod to be running..."
     POD_STATE="$( kubectl get pods -n $NAMESPACE | grep -ie "^mysql-" | awk '{print $3}')"
