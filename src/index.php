@@ -24,7 +24,6 @@ try{
 
             $query = $pdo->prepare($sql);
             $query->execute();
-            echo $query->debugDumpParams();
         } else {
             echo "504 not enough data";
         }
