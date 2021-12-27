@@ -210,7 +210,7 @@ fi
 if [ $CREATE_KEYBASED -eq 1 ] ; then
 
     # exit if not all required arguments are passed
-    if [ $TABLE_NAME -eq 0 ] ; then
+    if [[ $TABLE_NAME == "" ]] ; then
         echo "ERROR: table is required!!"
         echo_help
         exit 1
