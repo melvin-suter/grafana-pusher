@@ -13,41 +13,37 @@ BASE_URL=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --base-url)
-      BASE_URL="$2"
-      shift ; shift
+    --base-url=*)
+      BASE_URL="${1#*=}"
       ;;
-    --table)
-      TABLE_NAME="$2"
-      shift ; shift
+    --table=*)
+      TABLE_NAME="${1#*=}"
       ;;
-    ---namespace)
-      NAMESPACE="$2"
-      shift ; shift
+    ---namespace=*)
+      NAMESPACE="${1#*=}"
       ;;
-    ---pv)
-      PV="$2"
-      shift ; shift
+    ---pv=*)
+      PV="${1#*=}"
       ;;
     --create-infra)
       CREATE_INFRA=1
-      shift
       ;;
     --create-keybased)
       CREATE_KEYBASED=1
-      shift
       ;;
     --create-timebased)
       CREATE_TIMEBASED=1
-      shift
       ;;
     -h|--help)
         CREATE_INFRA=0
         CREATE_KEYBASED=0
         CREATE_TIMEBASED=0
-      shift
       ;;
+    *)
+        echo "INVALID ARGUMENT"
+        exit 1
   esac
+  shift
 done
 
 echo_help () {
@@ -59,13 +55,13 @@ echo_help () {
     echo "  --create-timebased        Create a time-based api endpoint"
     echo "Options:"
     echo "  For infra:"
-    echo "  --base-url <BASEURL>      Specify the base-url for all ingress (required)"
-    echo "  --namespace <NAMESPACE>   Specify namespace to use"
-    echo "  --pv <PV-NAME>            Specify a volume for the pvc, if not set"
+    echo "  --base-url=<BASEURL>      Specify the base-url for all ingress (required)"
+    echo "  --namespace=<NAMESPACE>   Specify namespace to use"
+    echo "  --pv=<PV-NAME>            Specify a volume for the pvc, if not set"
     echo "                            no pv will be specified, but a generic pvc"
     echo "                            will be created"
     echo "  For api endpoints:"
-    echo "  --table <TABLENAME>       Specify table-name (required)"
+    echo "  --table=<TABLENAME>       Specify table-name (required)"
     echo ""
     exit 0
 }
