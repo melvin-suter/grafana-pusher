@@ -1,5 +1,3 @@
-CREATE DATABASE IF NOT EXISTS grafanapusher;
-use grafanapusher;
 
 CREATE TABLE IF NOT EXISTS tableconfig (
     tablename VARCHAR(255) PRIMARY KEY,
