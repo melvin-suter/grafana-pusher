@@ -2,7 +2,7 @@
 apiVersion: v1
 data:
   MARIADB_ROOT_PASSWORD: @@MARIADB_ROOT_PASSWORD@@
-  MARIADB_PASSWORD: @@MARIADB_PASSWORD@@=
+  MARIADB_PASSWORD: @@MARIADB_PASSWORD@@
 kind: Secret
 metadata:
   name: mysql-secret
