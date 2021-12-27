@@ -227,7 +227,7 @@ if [ $CREATE_KEYBASED -eq 1 ] ; then
 
     echo "running mysql procedure"
     MYSQL_POD_NAME=$(kubectl get pods -n $(cat $SCRIPT_ROOT/config/NAMESPACE) | grep -ie "^mysql-" | awk '{print $1}')
-    kubectl exec -n $(cat $SCRIPT_ROOT/config/NAMESPACE) -it $MYSQL_POD_NAME -- /bin/bash -c "echo \"CALL create_timebased('$TABLE_NAME');\" | mysql -u$(cat $SCRIPT_ROOT/config/MARIADB_USER) -p$(cat $SCRIPT_ROOT/config/MARIADB_PASSWORD) $(cat $SCRIPT_ROOT/config/MARIADB_DATABASE)" >/dev/null
+    kubectl exec -n $(cat $SCRIPT_ROOT/config/NAMESPACE) -it $MYSQL_POD_NAME -- /bin/bash -c "echo \"CALL create_keybased('$TABLE_NAME');\" | mysql -u$(cat $SCRIPT_ROOT/config/MARIADB_USER) -p$(cat $SCRIPT_ROOT/config/MARIADB_PASSWORD) $(cat $SCRIPT_ROOT/config/MARIADB_DATABASE)" >/dev/null
 
     exit 0
 fi
