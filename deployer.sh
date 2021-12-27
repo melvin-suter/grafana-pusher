@@ -76,10 +76,16 @@ if [ $CREATE_INFRA -eq 1 ] ; then
     fi
 
     echo "Generating keys..."
-    MARIA_PW=$(cat /dev/urandom | tr -dc '[:alpha:]' | fold -w ${1:-20} | head -n 1 | md5sum | awk '{print $1}')
-    MARIA_PW_64=$(echo -n $MARIA_PW | base64)
-    MARIA_ROOT_PW=$(cat /dev/urandom | tr -dc '[:alpha:]' | fold -w ${1:-20} | head -n 1 | md5sum | awk '{print $1}')
-    MARIA_ROOT_PW_64=$(echo -n $MARIA_ROOT_PW | base64)
+    TEST_RES=0
+    while ( $TEST_RES -ne 2 ) ; do
+        MARIA_PW=$(cat /dev/urandom | tr -dc '[:alpha:]' | fold -w ${1:-20} | head -n 1 | md5sum | awk '{print $1}')
+        MARIA_PW_64=$(echo -n $MARIA_PW | base64)
+        MARIA_ROOT_PW=$(cat /dev/urandom | tr -dc '[:alpha:]' | fold -w ${1:-20} | head -n 1 | md5sum | awk '{print $1}')
+        MARIA_ROOT_PW_64=$(echo -n $MARIA_ROOT_PW | base64)
+
+        # This hack is needed, as the above base64 generation sometimes fails and gives out a not decodable base64 string
+        TEST_RES=$((  $( echo  $MARIA_ROOT_PW_64 | base64 -d 2>&1 | grep inval > /dev/null ; echo $?)  + $( echo  $MARIA_PW_64 | base64 -d 2>&1 | grep inval > /dev/null ; echo $?)  ))
+    done
 
     echo "Generating templates..."
     cp -R $SCRIPT_ROOT/templates/infra $SCRIPT_ROOT/kubectl_files
@@ -133,7 +139,7 @@ if [ $CREATE_INFRA -eq 1 ] ; then
 
     echo "waiting for mysql pod to be running..."
     POD_STATE="$( kubectl get pods -n $NAMESPACE | grep -ie "^mysql-" | awk '{print $3}')"
-    while [ $POD_STATE -ne "Running" ] ; do
+    while [[ $POD_STATE != "Running" ]] ; do
         echo "** $POD_STATE"
         sleep 2
         POD_STATE="$( kubectl get pods -n $NAMESPACE | grep -ie "^mysql-" | awk '{print $3}')"
