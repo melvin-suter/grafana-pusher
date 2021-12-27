@@ -11,8 +11,8 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  MARIADB_DATABASE: grafanapusher
-  MARIADB_USER: grafanapusher
+  MARIADB_DATABASE: @@MARIADB_DATABASE@@
+  MARIADB_USER: @@MARIADB_USER@@
 kind: ConfigMap
 metadata:
   name: mysql-config

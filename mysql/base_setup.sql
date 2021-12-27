@@ -47,10 +47,10 @@ BEGIN
     END WHILE;
 
     -- Print out
-    SELECT CONCAT('data_',newtablename) as TableName, @new_authkey as AuthKey;
+    SELECT newtablename as TableName, @new_authkey as AuthKey;
 
     -- Insert Table Config
-    INSERT INTO tableconfig(tablename, authkey, mode) VALUE(CONCAT('data_',newtablename), @new_authkey, 1);
+    INSERT INTO tableconfig(tablename, authkey, mode) VALUE(newtablename, @new_authkey, 1);
 
     -- Create Config
     SET @c = CONCAT('CREATE TABLE IF NOT EXISTS data_', newtablename,'(
@@ -87,10 +87,10 @@ BEGIN
     END WHILE;
 
     -- Print out
-    SELECT CONCAT('data_',newtablename) as TableName, @new_authkey as AuthKey;
+    SELECT newtablename as TableName, @new_authkey as AuthKey;
 
     -- Insert Table Config
-    INSERT INTO tableconfig(tablename, authkey, mode) VALUE(CONCAT('data_',newtablename), @new_authkey, 1);
+    INSERT INTO tableconfig(tablename, authkey, mode) VALUE(newtablename, @new_authkey, 2);
 
     -- Create Config
     SET @c = CONCAT('CREATE TABLE IF NOT EXISTS data_', newtablename,'(
