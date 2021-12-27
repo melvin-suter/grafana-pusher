@@ -144,8 +144,12 @@ if [ $CREATE_INFRA -eq 1 ] ; then
 
     echo "deploying mysql config..."
     MYSQL_POD_NAME=$(kubectl get pods -n $NAMESPACE | grep -ie "^mysql-" | awk '{print $1}')
-    kubectl cp -n $NAMESPACE mysql/base_setup.sql $MYSQL_POD_NAME:/tmp/base_setup.sql
-    kubectl exec -n $NAMESPACE -it $MYSQL_POD_NAME -- /bin/bash -c "cat /tmp/base_setup.sql | mysql -uroot -p$MARIA_ROOT_PW $MARIADB_DATABASE"
+
+    find $SCRIPT_ROOT/mysql/ -type f | while read file ; do 
+        kubectl cp -n $NAMESPACE $file $MYSQL_POD_NAME:/tmp/$(basename $file).sql
+        kubectl exec -n $NAMESPACE -it $MYSQL_POD_NAME -- /bin/bash -c "cat /tmp/$(basename $file).sql | mysql -uroot -p$MARIA_ROOT_PW $MARIADB_DATABASE"
+    done
+
 
 
     echo ""
